@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Oinks of Olympus Prototype</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="game-shell">
+    <header class="top-panel">
+      <div>
+        <h1>🐷 Oinks of Olympus</h1>
+        <p>Playable HTML prototype</p>
+      </div>
+
+      <div class="stats">
+        <div>Credits: <span id="credits">1000</span></div>
+        <div>Bet: <span id="bet">20</span></div>
+        <div>Win: <span id="win">0</span></div>
+      </div>
+    </header>
+
+    <section class="feature-panel">
+      <div class="ladder-title">Olympian Strike Multiplier</div>
+      <div id="multiplierLadder" class="multiplier-ladder">
+        <span>x2</span>
+        <span>x4</span>
+        <span>x8</span>
+        <span>x16</span>
+      </div>
+      <div id="freeSpinsPanel" class="free-spins hidden">
+        Free Spins: <span id="freeSpins">0</span>
+      </div>
+    </section>
+
+    <section id="slotGrid" class="slot-grid"></section>
+
+    <section class="message-bar">
+      <span id="message">Press SPIN to begin</span>
+    </section>
+
+    <section class="controls">
+      <button id="spinButton">SPIN</button>
+      <button id="resetButton">RESET</button>
+    </section>
+
+    <section id="totalWinBanner" class="total-win hidden">
+      <h2>FREE SPINS COMPLETE</h2>
+      <p>Total Win: <span id="totalFreeWin">0</span></p>
+      <button id="closeBanner">Continue</button>
+    </section>
+  </main>
+     </section>
+  </main>
+
+  <script src="game.js"></script>
+</body>
+</html>
