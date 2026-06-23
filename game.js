@@ -208,13 +208,26 @@ async function spin() {
 function evaluateCashCollect() {
   let cashTotal = 0;
   let collectors = 0;
+  const cashValues = [];
 
   forEachSymbol(s => {
-    if (s.type === "cash") cashTotal += s.cashValue || 0;
-    if (s.type === "collect") collectors++;
+    if (s.type === "cash") {
+      cashTotal += s.cashValue || 0;
+      cashValues.push(s.cashValue || 0);
+    }
+
+    if (s.type === "collect") {
+      collectors++;
+    }
   });
 
-  return cashTotal > 0 && collectors > 0 ? cashTotal * collectors : 0;
+  if (cashTotal > 0 && collectors > 0) {
+    messageEl.textContent = `⚡ COLLECT! Coins ${cashValues.join(" + ")} = ${cashTotal} × ${collectors} collector(s)`;
+    return cashTotal * collectors;
+  }
+
+  return 0;
+}
 }
 
 function evaluateWins() {
@@ -322,15 +335,6 @@ function resetGame() {
 
 spinButton.addEventListener("click", spin);
 resetButton.addEventListener("click", resetGame);
-
-closeBanner.addEventListener("click", () => {
-  totalWinBanner.classList.add("hidden");
-});
-
-createGrid();
-renderGrid();
-updateUI();
-
 
 closeBanner.addEventListener("click", () => {
   totalWinBanner.classList.add("hidden");
