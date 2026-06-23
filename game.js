@@ -124,15 +124,17 @@ async function spin() {
   spinning = true;
   spinButton.disabled = true;
   win = 0;
+  updateUI();
 
   if (freeSpins > 0) {
     freeSpins--;
-    messageEl.textContent = "Free spin!";
+    messageEl.textContent = `Free Spin! ${freeSpins} remaining.`;
   } else {
     credits -= bet;
+
     if (Math.random() < 1 / 15) {
       multiplierIndex = 0;
-      messageEl.textContent = "Olympian Strike activated!";
+      messageEl.textContent = "⚡ Olympian Strike activated!";
     } else {
       multiplierIndex = -1;
       messageEl.textContent = "Spinning...";
@@ -141,54 +143,61 @@ async function spin() {
 
   updateUI();
 
-  for (let i = 0; i < 8; i++) {
+  for (let i = 0; i < 12; i++) {
     createGrid();
     renderGrid();
-    await sleep(70);
+    await sleep(55);
   }
 
   let totalWin = 0;
 
   const collectWin = evaluateCashCollect();
+
   if (collectWin > 0) {
-    totalWin += collectWin * currentMultiplier();
-    messageEl.textContent = `Cash collected: ${collectWin} x${currentMultiplier()}`;
-    await sleep(600);
+    const collectTotal = collectWin * currentMultiplier();
+    totalWin += collectTotal;
+    messageEl.textContent = `⚡ Cash Collect: ${collectWin} x${currentMultiplier()} = ${collectTotal}`;
+    await sleep(900);
   }
 
-  for (let cascade = 1; cascade <= 5; cascade++) {
+  for (let cascade = 1; cascade <= 6; cascade++) {
     const result = evaluateWins();
 
     if (result.amount <= 0) break;
 
-    const cascadeWin = result.amount * currentMultiplier();
+    const multiplier = currentMultiplier();
+    const cascadeWin = result.amount * multiplier;
     totalWin += cascadeWin;
 
     highlightWins(result.cells);
-    messageEl.textContent = `Cascade ${cascade}: +${cascadeWin}`;
-    await sleep(600);
+    messageEl.textContent = `✨ Cascade ${cascade}: ${result.amount} x${multiplier} = ${cascadeWin}`;
+    await sleep(900);
 
     removeWins(result.cells);
     dropSymbols();
 
     if (multiplierIndex >= 0 && multiplierIndex < 3) {
       multiplierIndex++;
+      messageEl.textContent = `⚡ Multiplier increased to x${currentMultiplier()}!`;
+      updateUI();
+      await sleep(500);
     }
 
     renderGrid();
     updateUI();
-    await sleep(400);
+    await sleep(500);
   }
 
   win = totalWin;
   credits += totalWin;
 
   const bonusCount = countType("bonus");
+
   if (bonusCount >= 3 && freeSpins <= 0) {
     freeSpins = 8;
-    messageEl.textContent = "Zeus Pig triggered 8 Free Spins!";
+    messageEl.textContent = "🐷 Zeus Pig triggered 8 Free Spins!";
   } else {
-    messageEl.textContent = totalWin > 0 ? `You won ${totalWin}!` : "No win. Spin again!";
+    messageEl.textContent = totalWin > 0 ? `🎉 Total win: ${totalWin}` : "No win. Spin again!";
   }
 
   updateUI();
@@ -196,7 +205,6 @@ async function spin() {
   spinning = false;
   spinButton.disabled = false;
 }
-
 function evaluateCashCollect() {
   let cashTotal = 0;
   let collectors = 0;
@@ -314,6 +322,15 @@ function resetGame() {
 
 spinButton.addEventListener("click", spin);
 resetButton.addEventListener("click", resetGame);
+
+closeBanner.addEventListener("click", () => {
+  totalWinBanner.classList.add("hidden");
+});
+
+createGrid();
+renderGrid();
+updateUI();
+
 
 closeBanner.addEventListener("click", () => {
   totalWinBanner.classList.add("hidden");
