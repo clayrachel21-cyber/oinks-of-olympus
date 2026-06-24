@@ -132,14 +132,13 @@ async function spin() {
   } else {
     credits -= bet;
 
-    if (Math.random() < 1 / 15) {
-      multiplierIndex = 0;
-      messageEl.textContent = "⚡ Olympian Strike activated!";
-    } else {
-      multiplierIndex = -1;
-      messageEl.textContent = "Spinning...";
-    }
-  }
+   if (Math.random() < 1 / 15) {
+  multiplierIndex = 0;
+  messageEl.textContent = "⚡ OLYMPIAN STRIKE! Multiplier ladder opened at x2!";
+} else {
+  multiplierIndex = -1;
+  messageEl.textContent = "Spinning...";
+}
 
   updateUI();
 
@@ -176,12 +175,26 @@ async function spin() {
     removeWins(result.cells);
     dropSymbols();
 
-    if (multiplierIndex >= 0 && multiplierIndex < 3) {
-      multiplierIndex++;
-      messageEl.textContent = `⚡ Multiplier increased to x${currentMultiplier()}!`;
-      updateUI();
-      await sleep(500);
-    }
+   if (multiplierIndex >= 0 && multiplierIndex < 3) {
+  const oldMultiplier = currentMultiplier();
+
+  multiplierIndex++;
+  updateUI();
+
+  const newMultiplier = currentMultiplier();
+  messageEl.textContent = `⚡ Multiplier ladder advanced: x${oldMultiplier} → x${newMultiplier}!`;
+
+  await pulseMultiplier(multiplierIndex);
+  await sleep(650);
+}
+async function pulseMultiplier(index) {
+  const el = ladderEls[index];
+  if (!el) return;
+
+  el.classList.add("pulse");
+  await sleep(500);
+  el.classList.remove("pulse");
+}
 
     renderGrid();
     updateUI();

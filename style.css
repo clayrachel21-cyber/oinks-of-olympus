@@ -151,6 +151,24 @@ h1 {
 .symbol.win {
     animation: pop .4s infinite alternate;
 }
+.multiplier-ladder span.pulse {
+  animation: multiplierPulse 0.5s ease-in-out;
+}
+
+@keyframes multiplierPulse {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 rgba(255, 216, 79, 0);
+  }
+  50% {
+    transform: scale(1.35);
+    box-shadow: 0 0 28px rgba(255, 216, 79, 1);
+  }
+  100% {
+    transform: scale(1.1);
+    box-shadow: 0 0 18px #ffd84f;
+  }
+}
 
 .message-bar {
     margin: 14px 0;
