@@ -1,6 +1,10 @@
-const COLS = 6;
-const ROWS = 4;
+const COLS = GAME_CONFIG.reels.cols;
+const ROWS = GAME_CONFIG.reels.rows;
+const symbols = GAME_CONFIG.symbols;
 
+let grid = [];
+let credits = GAME_CONFIG.economy.startingCredits;
+let bet = GAME_CONFIG.economy.bet;
 const symbols = [
   { id: "helmet", icon: "🪖", type: "normal", value: 40 },
   { id: "goblet", icon: "🏆", type: "normal", value: 35 },
@@ -39,22 +43,27 @@ const totalFreeWin = document.getElementById("totalFreeWin");
 const closeBanner = document.getElementById("closeBanner");
 
 function randomSymbol() {
-  const roll = Math.random();
+  const totalWeight = symbols.reduce((sum, s) => sum + s.weight, 0);
+  let roll = Math.random() * totalWeight;
 
-  if (roll < 0.06) {
-    const values = [10, 20, 30, 40, 50, 75, 100];
-    return {
-      ...symbols.find(s => s.id === "cash"),
-      cashValue: values[Math.floor(Math.random() * values.length)]
-    };
+  for (const symbol of symbols) {
+    roll -= symbol.weight;
+
+    if (roll <= 0) {
+      if (symbol.type === "cash") {
+        return {
+          ...symbol,
+          cashValue: GAME_CONFIG.cashValues[
+            Math.floor(Math.random() * GAME_CONFIG.cashValues.length)
+          ]
+        };
+      }
+
+      return { ...symbol };
+    }
   }
 
-  if (roll < 0.10) return { ...symbols.find(s => s.id === "collect") };
-  if (roll < 0.15) return { ...symbols.find(s => s.id === "bonus") };
-  if (roll < 0.22) return { ...symbols.find(s => s.id === "wild") };
-
-  const normal = symbols.filter(s => s.type === "normal");
-  return { ...normal[Math.floor(Math.random() * normal.length)] };
+  return { ...symbols[0] };
 }
 
 function createGrid() {
@@ -132,8 +141,8 @@ async function spin() {
   } else {
     credits -= bet;
 
-   if (Math.random() < 1 / 15) {
-  multiplierIndex = 0;
+if (Math.random() < GAME_CONFIG.features.multiplierActivationRate) {
+  return GAME_CONFIG.features.multiplierLadder[multiplierIndex];
   messageEl.textContent = "⚡ OLYMPIAN STRIKE! Multiplier ladder opened at x2!";
 } else {
   multiplierIndex = -1;
@@ -206,8 +215,8 @@ async function pulseMultiplier(index) {
 
   const bonusCount = countType("bonus");
 
-  if (bonusCount >= 3 && freeSpins <= 0) {
-    freeSpins = 8;
+  if (bonusCount >= GAME_CONFIG.features.freeSpinsTriggerCount && freeSpins <= 0) {
+  freeSpins = GAME_CONFIG.features.freeSpinsAward;
     messageEl.textContent = "🐷 Zeus Pig triggered 8 Free Spins!";
   } else {
     messageEl.textContent = totalWin > 0 ? `🎉 Total win: ${totalWin}` : "No win. Spin again!";
