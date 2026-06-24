@@ -212,8 +212,9 @@ function evaluateCashCollect() {
 
   forEachSymbol(s => {
     if (s.type === "cash") {
-      cashTotal += s.cashValue || 0;
-      cashValues.push(s.cashValue || 0);
+      const value = s.cashValue || 0;
+      cashTotal += value;
+      cashValues.push(value);
     }
 
     if (s.type === "collect") {
@@ -222,12 +223,14 @@ function evaluateCashCollect() {
   });
 
   if (cashTotal > 0 && collectors > 0) {
-    messageEl.textContent = `⚡ COLLECT! Coins ${cashValues.join(" + ")} = ${cashTotal} × ${collectors} collector(s)`;
-    return cashTotal * collectors;
+    const collectedTotal = cashTotal * collectors;
+    messageEl.textContent =
+      `⚡ COLLECT! ${cashValues.join(" + ")} = ${cashTotal} × ${collectors} collector(s) = ${collectedTotal}`;
+
+    return collectedTotal;
   }
 
   return 0;
-}
 }
 
 function evaluateWins() {
